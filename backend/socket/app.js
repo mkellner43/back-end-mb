@@ -73,8 +73,8 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(express.json({ limit: "50mb" }));
 app.use(cookieParser());
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log(`listening on ${process.env.PORT || 3000}`);
+app.listen(process.env.SOCKET_PORT_SERVER || 3000, () => {
+  console.log(`listening on ${process.env.SOCKET_PORT_SERVER || 3000}`);
 });
 
 // figure out how to properly emit and collect online users when connected / disconnected from socket
