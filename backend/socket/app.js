@@ -10,6 +10,8 @@ require("dotenv").config();
 let users = [];
 
 //socket io
+console.log(process.env.SOCKET_PORT)
+console.log(process.env.SOCKET_PORT_SERVER)
 const io = require("socket.io")(process.env.SOCKET_PORT, {
   cors: {
     origin: process.env.FRONT_END_URL,
