@@ -7,16 +7,19 @@ const logger = require("morgan");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 require("dotenv").config();
+const {Server} = require("socket.io")
 let users = [];
 
 //socket io
-console.log(process.env.SOCKET_PORT)
-console.log(process.env.SOCKET_PORT_SERVER)
-const io = require("socket.io")(process.env.SOCKET_PORT, {
-  cors: {
-    origin: process.env.FRONT_END_URL,
-  },
-});
+// console.log(process.env.SOCKET_PORT);
+// console.log(process.env.SOCKET_PORT_SERVER);
+// const io = require("socket.io")(process.env.SOCKET_PORT, {
+//   cors: {
+//     origin: process.env.FRONT_END_URL,
+//   },
+// });
+const io = new Server(process.env.SOCKET_PORT)
+
 io.on("connection", async (socket) => {
   socket.join(socket.handshake.auth.userID);
   socket.on("send message", ({ id, thread }) => {
@@ -67,17 +70,17 @@ io.on("connection", async (socket) => {
   });
 });
 
-const app = express();
+// const app = express();
 
-app.use(cors({ origin: process.env.FRONT_END_URL, credentials: true }));
-app.use(logger("dev"));
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-app.use(express.json({ limit: "50mb" }));
-app.use(cookieParser());
+// app.use(cors({ origin: process.env.FRONT_END_URL, credentials: true }));
+// app.use(logger("dev"));
+// app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+// app.use(express.json({ limit: "50mb" }));
+// app.use(cookieParser());
 
-app.listen(process.env.SOCKET_PORT_SERVER || 3000, () => {
-  console.log(`listening on ${process.env.SOCKET_PORT_SERVER || 3000}`);
-});
+// app.listen(process.env.SOCKET_PORT_SERVER || 3000, () => {
+//   console.log(`listening on ${process.env.SOCKET_PORT_SERVER || 3000}`);
+// });
 
 // figure out how to properly emit and collect online users when connected / disconnected from socket
 // may need to set state rather than in cache
