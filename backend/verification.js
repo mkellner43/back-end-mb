@@ -8,7 +8,6 @@ exports.verifyToken = (req, res, next) => {
     req.query.token ||
     req.headers.authorization ||
     req.cookies.access_token;
-  console.log(req.headers.authorization)
   if (!token) {
     return res.status(403).send("A token is required for authentication");
   }
