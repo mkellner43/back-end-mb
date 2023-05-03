@@ -1,24 +1,21 @@
-const createError = require("http-errors");
-const express = require("express");
+// const createError = require("http-errors");
+// const express = require("express");
+// const path = require("path");
+// const cookieParser = require("cookie-parser");
+// const logger = require("morgan");
+// const cors = require("cors");
+// const bodyParser = require("body-parser");
+const httpServer = require("http").createServer();
 require("dotenv").config();
-const path = require("path");
-const cookieParser = require("cookie-parser");
-const logger = require("morgan");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-require("dotenv").config();
-const {Server} = require("socket.io")
 let users = [];
 
 //socket io
-// console.log(process.env.SOCKET_PORT);
-// console.log(process.env.SOCKET_PORT_SERVER);
-// const io = require("socket.io")(process.env.SOCKET_PORT, {
-//   cors: {
-//     origin: process.env.FRONT_END_URL,
-//   },
-// });
-const io = new Server(process.env.SOCKET_PORT)
+const io = require("socket.io")(httpServer, {
+  cors: {
+    origin: process.env.FRONT_END_URL,
+    credentials: true,
+  },
+});
 
 io.on("connection", async (socket) => {
   socket.join(socket.handshake.auth.userID);
@@ -78,10 +75,12 @@ io.on("connection", async (socket) => {
 // app.use(express.json({ limit: "50mb" }));
 // app.use(cookieParser());
 
-// app.listen(process.env.SOCKET_PORT_SERVER || 3000, () => {
-//   console.log(`listening on ${process.env.SOCKET_PORT_SERVER || 3000}`);
-// });
+httpServer.listen(process.env.SOCKET_PORT || 3000, () => {
+  console.log(`listening on ${process.env.SOCKET_PORT || 3000}`);
+});
 
 // figure out how to properly emit and collect online users when connected / disconnected from socket
 // may need to set state rather than in cache
 // already setOnlineFriends state in Nav store (: Give it a shot
+
+//getting pretty close to prod working need to set up custom domain -> can get one free with freenom
