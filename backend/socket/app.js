@@ -1,11 +1,4 @@
-// const createError = require("http-errors");
-// const express = require("express");
-// const path = require("path");
-// const cookieParser = require("cookie-parser");
-// const logger = require("morgan");
-// const cors = require("cors");
-// const bodyParser = require("body-parser");
-const httpServer = require("https").createServer()
+const httpServer = require("http").createServer()
 require("dotenv").config();
 let users = [];
 
@@ -67,20 +60,13 @@ io.on("connection", async (socket) => {
   });
 });
 
-// const app = express();
 
-// app.use(cors({ origin: process.env.FRONT_END_URL, credentials: true }));
-// app.use(logger("dev"));
-// app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-// app.use(express.json({ limit: "50mb" }));
-// app.use(cookieParser());
-
-httpServer.listen(process.env.SOCKET_PORT || 3000, () => {
-  console.log(`listening on ${process.env.SOCKET_PORT || 3000}`);
+httpServer.listen(process.env.PORT || 3000, () => {
+  console.log(`listening on ${process.env.PORT || 3000}`);
 });
 
-// figure out how to properly emit and collect online users when connected / disconnected from socket
-// may need to set state rather than in cache
-// already setOnlineFriends state in Nav store (: Give it a shot
 
 //getting pretty close to prod working need to set up custom domain -> can get one free with freenom
+
+
+//making all ports seperate to hopefully fucking solve this bs issue with socket :(
