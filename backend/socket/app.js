@@ -5,11 +5,7 @@
 // const logger = require("morgan");
 // const cors = require("cors");
 // const bodyParser = require("body-parser");
-const fs = require("fs");
-const httpServer = require("https").createServer({
-  key: fs.readFileSync("/tmp/key.pem"),
-  cert: fs.readFileSync("/tmp/cert.pem")
-});
+const httpServer = require("https").createServer()
 require("dotenv").config();
 let users = [];
 
