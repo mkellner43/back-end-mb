@@ -1,4 +1,4 @@
-const httpServer = require("http").createServer()
+const httpServer = require("https").createServer()
 require("dotenv").config();
 let users = [];
 
@@ -70,3 +70,4 @@ httpServer.listen(process.env.PORT || 3000, () => {
 
 
 //making all ports seperate to hopefully fucking solve this bs issue with socket :(
+// with everything seperate I'm confident this will work ==
