@@ -1,9 +1,14 @@
-const httpServer = require("https").createServer()
+const express = require("express")
+const {createServer} = require('http')
+const { Server } = require("socket.io")
+
+const app = express();
+const httpServer = createServer(app);
 require("dotenv").config();
 let users = [];
 
 //socket io
-const io = require("socket.io")(httpServer, {
+const io = new Server(httpServer, {
   cors: {
     origin: process.env.FRONT_END_URL,
     credentials: true,
@@ -70,4 +75,4 @@ httpServer.listen(process.env.PORT || 3000, () => {
 
 
 //making all ports seperate to hopefully fucking solve this bs issue with socket :(
-// with everything seperate I'm confident this will work ==
+// may need to get express app and connect socket? WTF??
