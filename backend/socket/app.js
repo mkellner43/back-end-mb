@@ -5,6 +5,8 @@ const { Server } = require("socket.io")
 const app = express();
 const httpServer = createServer(app);
 require("dotenv").config();
+
+//should push users to a DB
 let users = [];
 
 //socket io
