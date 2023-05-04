@@ -52,6 +52,7 @@ exports.delete = (req, res, next) => {
     .exec()
     .then((response) => {
       // check if requester is the posting user
+      console.log(response?.user.username === req.user.username)
       if (response?.user.username === req.user.username) {
         Post.deleteOne({ _id: req.params.id })
           .then((response) => res.send(response))
