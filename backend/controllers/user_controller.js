@@ -6,7 +6,6 @@ const cloudinary = require("../utils/cloudinary");
 
 exports.authenticate = async (req, res, next) => {
   try {
-    console.log(req.body);
     const { username, password } = req.body;
     if (!(username && password))
       return res.status(400).send("All input is required");
@@ -19,8 +18,8 @@ exports.authenticate = async (req, res, next) => {
       );
       await user.populate("avatar");
       return res
-        .cookie("access_token", token)
-        .status(200)
+        // .cookie("access_token", token)
+        // .status(200)
         .send({
           username: user.username,
           first_name: user.first_name,
