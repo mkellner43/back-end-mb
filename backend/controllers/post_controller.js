@@ -50,6 +50,10 @@ exports.delete = async (req, res, next) => {
   try {
     const post = await Post.findById(req.params.id);
     if (post.user == req.user.user_id) {
+      if(post.image.public_id) {
+        const img = await cloudinary.uploader.destroy(post.image.public_id)
+        console.log(img)
+      }
       const deleteResponse = await Post.deleteOne({ _id: post._id });
       res.json(deleteResponse);
     } else res.sendStatus(401);
