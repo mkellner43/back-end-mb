@@ -48,13 +48,13 @@ exports.update = async (req, res, next) => {
 exports.delete = async (req, res, next) => {
   // using promise chaining
   try {
-    const post = await Post.findById(req.params.id)
-    if(post.user == req.user.user_id) {
-      const deleteResponse = await Post.deleteOne({_id: post._id})
-      res.json(deleteResponse)
-    } else res.sendStatus(401)
+    const post = await Post.findById(req.params.id);
+    if (post.user == req.user.user_id) {
+      const deleteResponse = await Post.deleteOne({ _id: post._id });
+      res.json(deleteResponse);
+    } else res.sendStatus(401);
   } catch (e) {
-    next(e)
+    next(e);
   }
 };
 
