@@ -16,7 +16,7 @@ exports.authenticate = async (req, res, next) => {
         process.env.TOKEN_KEY,
         { expiresIn: "24h" }
       );
-      await user.populate("avatar");
+      // await user.populate("avatar");
       return res
         // .cookie("access_token", token)
         // .status(200)
@@ -132,12 +132,8 @@ exports.deleteNotification = async (req, res, next) => {
 };
 
 exports.update = async (req, res, next) => {
+  const token = req.headers.authorization
   try {
-    const token =
-      req.body.token ||
-      req.query.token ||
-      req.headers["Authorization"] ||
-      req.cookies.access_token;
     if (!req.body.avatar) {
       const user = await User.findById(req.user.user_id);
       user.avatar = null;
@@ -160,6 +156,8 @@ exports.update = async (req, res, next) => {
       url: avatarImage.secure_url,
     };
     await user.save();
+    console.log(user.avatar)
+    console.log(token)
     return res.json({
       username: user.username,
       first_name: user.first_name,

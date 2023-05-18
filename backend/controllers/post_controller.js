@@ -45,20 +45,17 @@ exports.update = async (req, res, next) => {
   }
 };
 
-exports.delete = (req, res, next) => {
+exports.delete = async (req, res, next) => {
   // using promise chaining
-  Post.findById(req.params.id)
-    .populate("user", "username avatar")
-    .exec()
-    .then((response) => {
-      // check if requester is the posting user
-      console.log(response?.user.username === req.user.username)
-      if (response?.user.username === req.user.username) {
-        Post.deleteOne({ _id: req.params.id })
-          .then((response) => res.send(response))
-          .catch(next);
-      } else res.sendStatus(401);
-    });
+  try {
+    const post = await Post.findById(req.params.id)
+    if(post.user == req.user.user_id) {
+      const deleteResponse = await Post.deleteOne({_id: post._id})
+      res.json(deleteResponse)
+    } else res.sendStatus(401)
+  } catch (e) {
+    next(e)
+  }
 };
 
 exports.index = async (req, res, next) => {

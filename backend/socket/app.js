@@ -71,10 +71,3 @@ io.on("connection", async (socket) => {
 httpServer.listen(process.env.PORT || 3000, () => {
   console.log(`listening on ${process.env.PORT || 3000}`);
 });
-
-
-//getting pretty close to prod working need to set up custom domain -> can get one free with freenom
-
-
-//making all ports seperate to hopefully fucking solve this bs issue with socket :(
-// may need to get express app and connect socket? WTF??

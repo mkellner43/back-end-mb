@@ -56,3 +56,5 @@ app.listen(process.env.PORT || 3000);
 console.log(`listening on ${process.env.PORT}`)
 
 // need to restructure controller to improve efficency, it is not currently optimized.
+
+// need to figure out why auth isn't working properly for mobile only? 
