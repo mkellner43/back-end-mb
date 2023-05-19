@@ -1,5 +1,7 @@
 const Post = require("../models/post");
 const User = require("../models/user");
+const Like = require("../models/like");
+const Comment = require("../models/comment");
 const Notification = require("../models/notification");
 const cloudinary = require("../utils/cloudinary");
 
@@ -46,14 +48,16 @@ exports.update = async (req, res, next) => {
 };
 
 exports.delete = async (req, res, next) => {
-  // using promise chaining
   try {
     const post = await Post.findById(req.params.id);
+    console.log(post);
     if (post.user == req.user.user_id) {
-      if(post.image.public_id) {
-        const img = await cloudinary.uploader.destroy(post.image.public_id)
-        console.log(img)
-      }
+      if (post.image?.public_id)
+        cloudinary.uploader.destroy(post.image.public_id);
+      await Promise.all([
+        Like.deleteMany({ _id: { $in: post.likes } }),
+        Comment.deleteMany({ _id: { $in: post.comments } }),
+      ]);
       const deleteResponse = await Post.deleteOne({ _id: post._id });
       res.json(deleteResponse);
     } else res.sendStatus(401);
@@ -70,8 +74,8 @@ exports.index = async (req, res, next) => {
         .skip(req.query.page)
         .limit(10)
         .populate("user", "first_name last_name username _id avatar")
-        .populate("likes", "username")
         .populate("commentCount")
+        .populate("likes")
         .populate({
           path: "comments",
           populate: {
@@ -107,14 +111,13 @@ exports.profile = async (req, res, next) => {
     const [posts, count, user] = await Promise.all([
       Post.find({ user: req.params.id })
         .populate("user", "first_name last_name username _id avatar")
-        .populate("likes", "username")
         .populate("commentCount")
+        .populate("likes")
         .populate({
           path: "comments",
           populate: {
             path: "user",
             select: "username first_name last_name avatar",
-            populate: "avatar",
           },
           options: { sort: { date: -1 }, limit: 2 },
         })
@@ -141,36 +144,52 @@ exports.search = () => {
   Post.find({ user: req.user._id });
 };
 
-exports.like = (req, res, next) => {
-  Post.findById(req.params.id)
-    .populate("likes", "first_name last_name username")
-    .then(async (result) => {
-      const hasLiked = result.likes.filter(
-        (user) => user._id.valueOf() === req.user.user_id
-      );
-      if (hasLiked.length > 0) {
-        result.likes = result.likes.filter(
-          (user) => user._id.valueOf() !== req.user.user_id
-        );
-        await result.save();
-        res.json({ msg: "removed like", data: result });
-      } else {
-        result.likes.push(req.user.user_id);
-        await result.save();
-        const postingUser = await User.findById(result.user);
-        if (req.user.user_id !== result.user.valueOf()) {
-          const notification = await Notification.create({
-            requester: req.user.user_id,
-            receiver: result.user,
-            type: "Like",
-            data: result,
-            msg: `${req.user.username} liked your post!`,
-          });
-          postingUser.notifications.push(notification);
-          postingUser.save();
-        }
-        res.json({ msg: "like added", data: result });
+exports.like = async (req, res, next) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    const likes = await Like.find({ post_id: post._id }).and({
+      user_id: req.user.user_id,
+    });
+    if (likes.length > 0) {
+      let newArr = post.likes.filter((like) => {
+        likes.filter((thisLike) => {
+          console.log("from likes arr", thisLike);
+          console.log("from post arr", like);
+          return thisLike._id != like;
+        }).length === 0;
+      });
+      post.likes = newArr;
+      const [like, postUpdated] = await Promise.all([
+        Like.deleteOne({ _id: likes[0]._id }),
+        post.save(),
+      ]);
+      res.json({ msg: "removed like", data: postUpdated });
+    } else {
+      const like = await Like.create({
+        user_id: req.user.user_id,
+        post_id: post._id,
+      });
+      post.likes.push(like._id);
+      console.log(post.likes);
+      const updatedPost = await post.save();
+      console.log(updatedPost);
+      if (req.user.user_id != post.user) {
+        const notification = await Notification.create({
+          requester: req.user.user_id,
+          receiver: post.user,
+          type: "Like",
+          data: like,
+          msg: `${req.user.username} liked your post!`,
+        });
+        const postingUser = await User.findById(req.user.user_id);
+        postingUser.notifications.push(notification);
+        await postingUser.save();
+        res.json({ msg: "like added", data: post });
       }
-    })
-    .catch(next);
+    }
+  } catch (e) {
+    next(e);
+  }
 };
+
+// have to fix this bullshit ^^ all likes are disappearing when unliking

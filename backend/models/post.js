@@ -6,7 +6,7 @@ const PostSchema = new mongoose.Schema(
     user: { type: mongoose.SchemaTypes.ObjectId, ref: "User", required: true },
     date: { type: Date, default: Date.now },
     comments: [{ type: mongoose.SchemaTypes.ObjectId, ref: "Comment" }],
-    likes: [{ type: mongoose.SchemaTypes.ObjectId, ref: "User" }],
+    likes: [{ type: mongoose.SchemaTypes.ObjectId, ref: "Like" }],
     image: { public_id: { type: String }, url: { type: String } },
   },
   { toJSON: { virtuals: true } }
