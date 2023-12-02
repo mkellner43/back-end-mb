@@ -28,7 +28,7 @@ exports.authenticate = async (req, res, next) => {
           avatar: user.avatar,
           token: token,
         });
-    } else res.sendStatus(401);
+    } else res.status(401);
   } catch (err) {
     res.status(400).send("Invalid Credentials", err);
   }
