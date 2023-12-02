@@ -4,7 +4,6 @@ const User = require("../models/user");
 const Notification = require("../models/notification");
 
 exports.new = (req, res, next) => {
-  console.log(req.body);
   Comment.create({
     comment_body: req.body.comment_body,
     user: req.user.user_id,

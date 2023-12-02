@@ -40,7 +40,6 @@ exports.accept = async (req, res, next) => {
       .populate("receiver", "_id username first_name last_name avatar");
     request.status = "accepted";
     await request.save();
-    console.log(request);
     const notification = await Notification.create({
       requester: request.receiver._id,
       receiver: req.user.user_id,
@@ -61,7 +60,6 @@ exports.accept = async (req, res, next) => {
       },
     });
   } catch (e) {
-    console.log(e);
     next(e);
   }
 };

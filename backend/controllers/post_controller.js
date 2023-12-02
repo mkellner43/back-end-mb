@@ -50,7 +50,6 @@ exports.update = async (req, res, next) => {
 exports.delete = async (req, res, next) => {
   try {
     const post = await Post.findById(req.params.id);
-    console.log(post);
     if (post.user == req.user.user_id) {
       if (post.image?.public_id)
         cloudinary.uploader.destroy(post.image.public_id);
@@ -153,8 +152,6 @@ exports.like = async (req, res, next) => {
     if (likes.length > 0) {
       let newArr = post.likes.filter((like) => {
         likes.filter((thisLike) => {
-          console.log("from likes arr", thisLike);
-          console.log("from post arr", like);
           return thisLike._id != like;
         }).length === 0;
       });
@@ -170,9 +167,7 @@ exports.like = async (req, res, next) => {
         post_id: post._id,
       });
       post.likes.push(like._id);
-      console.log(post.likes);
       const updatedPost = await post.save();
-      console.log(updatedPost);
       if (req.user.user_id != post.user) {
         const notification = await Notification.create({
           requester: req.user.user_id,

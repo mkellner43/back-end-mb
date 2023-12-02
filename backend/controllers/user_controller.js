@@ -156,8 +156,6 @@ exports.update = async (req, res, next) => {
       url: avatarImage.secure_url,
     };
     await user.save();
-    console.log(user.avatar)
-    console.log(token)
     return res.json({
       username: user.username,
       first_name: user.first_name,
@@ -167,7 +165,6 @@ exports.update = async (req, res, next) => {
       token: token,
     });
   } catch (err) {
-    console.log(err);
     next(err);
   }
 };
