@@ -12,19 +12,19 @@ router.post("/registration", user_controller.create);
 router.post(
   "/notifications/read",
   verifyToken,
-  user_controller.readNotifictions
+  user_controller.readNotifications
 );
 
 router.post(
   "/notifications/read/:id",
   verifyToken,
-  user_controller.readNotifiction
+  user_controller.readNotification
 );
 
 router.post(
   "/notifications/unread",
   verifyToken,
-  user_controller.unreadNotifictions
+  user_controller.unreadNotifications
 );
 
 router.delete(

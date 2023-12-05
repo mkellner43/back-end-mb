@@ -16,10 +16,7 @@ exports.authenticate = async (req, res, next) => {
         process.env.TOKEN_KEY,
         { expiresIn: "24h" }
       );
-      // await user.populate("avatar");
       return res
-        // .cookie("access_token", token)
-        // .status(200)
         .send({
           username: user.username,
           first_name: user.first_name,
@@ -79,7 +76,7 @@ exports.notifications = async (req, res, next) => {
   });
 };
 
-exports.readNotifictions = async (req, res, next) => {
+exports.readNotifications = async (req, res, next) => {
   try {
     const notifications = await Notification.updateMany(
       { receiver: req.user.user_id },
@@ -91,7 +88,7 @@ exports.readNotifictions = async (req, res, next) => {
   }
 };
 
-exports.readNotifiction = async (req, res, next) => {
+exports.readNotification = async (req, res, next) => {
   try {
     const notifications = await Notification.updateOne(
       { _id: req.params.id },
@@ -103,7 +100,7 @@ exports.readNotifiction = async (req, res, next) => {
   }
 };
 
-exports.unreadNotifictions = async (req, res, next) => {
+exports.unreadNotifications = async (req, res, next) => {
   try {
     const notifications = await Notification.updateMany(
       { receiver: req.user.user_id },
