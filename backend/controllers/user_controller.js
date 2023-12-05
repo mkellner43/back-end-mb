@@ -3,6 +3,7 @@ const Notification = require("../models/notification");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const cloudinary = require("../utils/cloudinary");
+const { v4: uuidv4 } = require("uuid");
 
 exports.authenticate = async (req, res, next) => {
   try {
@@ -16,18 +17,45 @@ exports.authenticate = async (req, res, next) => {
         process.env.TOKEN_KEY,
         { expiresIn: "24h" }
       );
-      return res
-        .send({
-          username: user.username,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          id: user._id,
-          avatar: user.avatar,
-          token: token,
-        });
+      return res.send({
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        id: user._id,
+        avatar: user.avatar,
+        token: token,
+      });
     } else res.status(401);
   } catch (err) {
     res.status(400).send("Invalid Credentials", err);
+  }
+};
+
+exports.authenticateGuest = async (req, res, next) => {
+  try {
+    const { isGuest } = req.body;
+    if (isGuest) {
+      const guest = uuidv4();
+      encryptedPassword = await bcrypt.hash(guest, 10);
+      const user = await User.create({
+        first_name: "Guest",
+        last_name: "User",
+        username: guest,
+        password: encryptedPassword,
+      });
+      const token = jwt.sign({ user_id: await user.id}, process.env.TOKEN_KEY, {
+        expiresIn: "24h",
+      });
+      return res.status(200).send({
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        id: user.id,
+        token: token,
+      });
+    }
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -129,7 +157,7 @@ exports.deleteNotification = async (req, res, next) => {
 };
 
 exports.update = async (req, res, next) => {
-  const token = req.headers.authorization
+  const token = req.headers.authorization;
   try {
     if (!req.body.avatar) {
       const user = await User.findById(req.user.user_id);

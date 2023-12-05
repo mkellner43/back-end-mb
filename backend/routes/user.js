@@ -7,6 +7,8 @@ const { verifyToken } = require("../verification");
 
 router.post("/login", user_controller.authenticate);
 
+router.post("/login/guest", user_controller.authenticateGuest);
+
 router.post("/registration", user_controller.create);
 
 router.post(
